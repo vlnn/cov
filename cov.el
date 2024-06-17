@@ -400,10 +400,10 @@ Return a list `((FILE . ((LINE-NUM EXEC-COUNT) ...)) ...)'."
                            "`lcov' parse error, SF with no preceeding end_of_record %s:%d"
                            cov-coverage-file (line-number-at-pos))
                         ;; SF always hold an absolute path
-                        (setq sourcefile (file-truename
-                                          (expand-file-name
-                                           (buffer-substring (point) (line-end-position))
-                                           (file-name-directory cov-coverage-file))))
+                        ;; @VLNN: cloverage thinks otherwise and push only
+                        ;; relative paths into SF field. This is quick hack to
+                        ;; make it work in my setup
+                        (setq sourcefile (file-truename (concat (clojure-project-root-path) (buffer-substring (point) (line-end-position)))))
                         (setq filelines
                               (or (gethash sourcefile data)
                                   (puthash sourcefile (make-hash-table :test 'eql) data)))))
